@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # Your existing health bot
+  health-bot:
+    build: .
+    environment:
+      - WEBHOOK_URL=${DISCORD_URL}
+    restart: "no"
+
+  # The metrics database
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  # The visual dashboard
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
